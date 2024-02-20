@@ -29,8 +29,19 @@
           });
       },
       updateProduct(index) {
+        const product = this.products[index];
+        
+        if (!product.id || !product.brand || !product.brand.name) {
+          this.showError("Update", "Product must have an ID and brand name.");
+          return;
+        }
+
         axios
-          .put(`${API}/product`, this.products[index])
+          // .put(`${API}/product`, this.products[index])
+          .put(`${API}/product/${product.id}`, {
+            ...product,
+            brand: { name: product.brand.name } // Ensure the brand object is structured as expected
+          })
           .then(() => {
             this.showSuccess("Item updated");
           })
@@ -54,7 +65,7 @@
       },
       deleteProduct(id, brandName, index) {
         axios
-          .delete(`${API}/product/${id}`, {
+          .delete(`${API}/product/${id}?brandName=${encodeURIComponent(brandName)}`, {
             data: {
               brand: {
                 name: brandName
